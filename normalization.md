@@ -1,7 +1,7 @@
 # Step 1: Ensure Your Tables are in First Normal Form (1NF)
-Eliminate Repeating Groups: Make sure that each table contains only atomic (indivisible) values.
+Eliminate Repeating Groups: Make sure that each table contains only atomic or indivisible values.
 
-Ensure Primary Keys: Every table must have a primary key to uniquely identify each record.
+Primary Keys: Every table must have a primary key to uniquely identify each record.
 
 Example:
 ```bash
@@ -13,11 +13,11 @@ Review(review_id, property_id, user_id, rating, comment, created_at)
 Message(message_id, sender_id, recipient_id, message_body, sent_at)
 ```
 # Step 2: Ensure Your Tables are in Second Normal Form (2NF)
-Remove Partial Dependencies: Ensure that all non-key attributes are fully functionally dependent on the entire primary key (applies to tables with composite primary keys).
+Remove Partial Dependencies: Ensure that all non-key attributes are fully functionally dependent on the entire primary key  - applies to tables with composite primary keys.
 
 For tables with a single primary key, 2NF is automatically achieved if they are in 1NF.
 
-Example:
+Example table:
 Booking table:
 ```bash
 Booking(booking_id, property_id, user_id, start_date, end_date, total_price, status, created_at)
