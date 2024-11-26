@@ -33,3 +33,23 @@ CREATE INDEX idx_property_host_id ON properties(host_id);
 
 -- Index for property_id
 CREATE INDEX idx_property_property_id ON properties(property_id);
+
+
+-- using EXPLAIN ANALYZE
+EXPLAIN ANALYZE                                             
+SELECT
+    bookings.booking_id,
+    bookings.property_id,
+    bookings.start_date,
+    bookings.end_date,
+    bookings.total_price,
+    bookings.status,
+    users.user_id,
+    users.first_name,
+    users.last_name,
+    users.email
+FROM
+    bookings
+INNER JOIN
+    users ON bookings.user_id = users.user_id;
+-- using EXPLAIN ANALYZE
