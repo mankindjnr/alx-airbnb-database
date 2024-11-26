@@ -1,0 +1,15 @@
+services:
+  alx-db-performance:
+    image: postgres:latest
+    container_name: alx-db-performance
+    environment:
+      POSTGRES_USER: alx
+      POSTGRES_PASSWORD: alx
+      POSTGRES_DB: alx
+    ports:
+      - "5432:5432"
+    volumes:
+      - alx-db-performance-data:/var/lib/postgresql/data
+
+volumes:
+  alx-db-performance-data:

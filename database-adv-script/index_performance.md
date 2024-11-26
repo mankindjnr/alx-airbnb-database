@@ -22,17 +22,35 @@ property_id: Used in JOIN clauses and WHERE clauses to identify properties.
 
 # Measuring Performance
 ***
-## Using EXPLAIN
-It provides a high-level overview of how the database engine plans to execte a query. It shows the steps involved, the order of operations, and the indexes used.
+## Using EXPLAIN ANALYZE
+It provides a high-level overview of how the database engine plans to execute a query. It shows the steps involved, the order of operations, and the indexes used.
 
-<!-- Before indexing -->
+<!-- Before indexing  bookings table-->
 ```bash
-Seq Scan on Booking  (cost=0.00..58.25 rows=3225 width=112)
-Seq Scan on User  (cost=0.00..35.50 rows=2550 width=96)
+                                                  QUERY PLAN                                                   
+---------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=11.57..30.71 rows=720 width=530) (actual time=0.096..0.106 rows=2 loops=1)
+   Hash Cond: (bookings.user_id = users.user_id)
+   ->  Seq Scan on bookings  (cost=0.00..17.20 rows=720 width=76) (actual time=0.026..0.028 rows=2 loops=1)
+   ->  Hash  (cost=10.70..10.70 rows=70 width=470) (actual time=0.049..0.051 rows=3 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         ->  Seq Scan on users  (cost=0.00..10.70 rows=70 width=470) (actual time=0.012..0.016 rows=3 loops=1)
+ Planning Time: 0.441 ms
+ Execution Time: 0.162 ms
+
 ```
 
 <!-- After Indexing -->
 ```bash
-Index Scan using idx_booking_user_id on Booking  (cost=0.42..15.32 rows=3225 width=112)
-Index Scan using idx_user_user_id on User  (cost=0.29..8.42 rows=2550 width=96)
+                                                  QUERY PLAN                                                   
+---------------------------------------------------------------------------------------------------------------
+ Hash Join  (cost=1.04..2.11 rows=2 width=530) (actual time=0.042..0.046 rows=2 loops=1)
+   Hash Cond: (users.user_id = bookings.user_id)
+   ->  Seq Scan on users  (cost=0.00..1.03 rows=3 width=470) (actual time=0.008..0.009 rows=3 loops=1)
+   ->  Hash  (cost=1.02..1.02 rows=2 width=76) (actual time=0.021..0.021 rows=2 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         ->  Seq Scan on bookings  (cost=0.00..1.02 rows=2 width=76) (actual time=0.006..0.007 rows=2 loops=1)
+ Planning Time: 0.713 ms
+ Execution Time: 0.072 ms
+
 ```
