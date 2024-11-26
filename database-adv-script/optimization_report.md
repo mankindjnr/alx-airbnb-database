@@ -25,7 +25,10 @@ FROM
     bookings
 JOIN users ON bookings.user_id = users.user_id
 JOIN properties ON bookings.property_id = properties.property_id
-JOIN payments ON bookings.booking_id = payments.booking_id;
+JOIN payments ON bookings.booking_id = payments.booking_id
+WHERE
+    bookings.status = 'confirmed'
+    AND bookings.start_date > '2024-12-01';
 ```
 <!-- inital performance -->
 
@@ -78,17 +81,17 @@ JOIN payments ON bookings.booking_id = payments.booking_id;
 ```bash
                                         QUERY PLAN                                        
 ------------------------------------------------------------------------------------------
- Hash Join  (cost=3.22..25.97 rows=920 width=1058)
+Hash Join  (cost=3.16..25.86 rows=460 width=1058)
    Hash Cond: (payments.booking_id = bookings.booking_id)
    ->  Seq Scan on payments  (cost=0.00..19.20 rows=920 width=60)
-   ->  Hash  (cost=3.20..3.20 rows=2 width=1014)
-         ->  Nested Loop  (cost=0.00..3.20 rows=2 width=1014)
-               Join Filter: (bookings.user_id = users.user_id)
-               ->  Nested Loop  (cost=0.00..2.09 rows=2 width=560)
-                     Join Filter: (bookings.property_id = properties.property_id)
-                     ->  Seq Scan on bookings  (cost=0.00..1.02 rows=2 width=76)
-                     ->  Materialize  (cost=0.00..1.03 rows=2 width=500)
-                           ->  Seq Scan on properties  (cost=0.00..1.02 rows=2 width=500)
-               ->  Materialize  (cost=0.00..1.04 rows=3 width=470)
+   ->  Hash  (cost=3.14..3.14 rows=1 width=1014)
+         ->  Nested Loop  (cost=0.00..3.14 rows=1 width=1014)
+               Join Filter: (bookings.property_id = properties.property_id)
+               ->  Nested Loop  (cost=0.00..2.10 rows=1 width=530)
+                     Join Filter: (bookings.user_id = users.user_id)
+                     ->  Seq Scan on bookings  (cost=0.00..1.03 rows=1 width=76)
+                           Filter: ((start_date > '2024-12-01'::date) AND (status = 'confirmed'::booking_status))
                      ->  Seq Scan on users  (cost=0.00..1.03 rows=3 width=470)
+               ->  Seq Scan on properties  (cost=0.00..1.02 rows=2 width=500)
+
 ```
